@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>奶茶学习进度 · 2026.12.20</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --ink: #1a1a1a;
+      --muted: #8a8578;
+      --paper: #ffffff;
+      --tea-red: #c96a4a;
+      --tea-milk: #e0c38a;
+      --tea-matcha: #9cbf65;
+      --line: #2b2b2b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 30px 16px 40px;
+      background-image:
+        radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: left;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px dashed rgba(0, 0, 0, 0.12);
+    }
+
+    .hand-drawn-title {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      line-height: 1.35;
+    }
+
+    .hand-drawn-title .sub {
+      display: block;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 6px;
+      letter-spacing: 2px;
+    }
+
+    .info-card {
+      background: var(--paper);
+      border: 2px solid var(--line);
+      border-radius: 24px;
+      padding: 16px;
+      margin-bottom: 22px;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.12);
+      transform: rotate(-0.5deg);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .info-card .block .label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .info-card .block .value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .cup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .cup-card {
+      background: var(--paper);
+      border: 2px solid var(--line);
+      border-radius: 22px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.12);
+      position: relative;
+    }
+
+    .cup-card:nth-child(1) { transform: rotate(-0.6deg); }
+    .cup-card:nth-child(2) { transform: rotate(0.4deg); }
+    .cup-card:nth-child(3) { transform: rotate(-0.3deg); }
+
+    .cup-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .cup-wrap {
+      position: relative;
+      width: 72px;
+      height: 110px;
+      margin: 0 auto 10px;
+    }
+
+    .cup-outline {
+      position: absolute;
+      inset: 0;
+      border: 2.5px solid var(--line);
+      border-top: none;
+      border-radius: 0 0 18px 18px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6), transparent 30%),
+        linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0));
+      overflow: hidden;
+    }
+
+    .liquid {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0%;
+      transition: height 0.4s ease;
+      border-radius: 0 0 16px 16px;
+    }
+
+    .liquid::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: inherit;
+      filter: brightness(1.08);
+      border-radius: 50%;
+    }
+
+    .pearls {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 18px;
+      background-image:
+        radial-gradient(circle at 20% 70%, #3a2a22 5px, transparent 6px),
+        radial-gradient(circle at 45% 75%, #3a2a22 5px, transparent 6px),
+        radial-gradient(circle at 70% 70%, #3a2a22 5px, transparent 6px),
+        radial-gradient(circle at 85% 80%, #3a2a22 4px, transparent 5px);
+      z-index: 2;
+    }
+
+    .cup-lid {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 86px;
+      height: 18px;
+      border: 2.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      z-index: 3;
+    }
+
+    .cup-straw {
+      position: absolute;
+      top: -30px;
+      left: 55%;
+      width: 6px;
+      height: 30px;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--ink) 0 4px,
+        var(--paper) 4px 8px
+      );
+      z-index: 1;
+      transform: rotate(6deg);
+    }
+
+    .progress-text {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .status-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1.5px solid var(--line);
+      background: var(--paper);
+      letter-spacing: 1px;
+    }
+
+    .status-ahead { color: #2f7d3f; }
+    .status-behind { color: #b33a2a; }
+    .status-on-track { color: #2a6fa3; }
+
+    .course-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    button {
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 14px;
+      background: var(--paper);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    button:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    button:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-reset {
+      background: #fff7ed;
+      font-size: 13px;
+      padding: 8px 12px;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 2px;
+    }
+
+    @media (max-width: 375px) {
+      .cup-wrap { width: 64px; height: 100px; }
+      .cup-lid { width: 78px; }
+      .cup-name { font-size: 12px; }
+      .progress-text { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="hand-drawn-title">
+        奶茶学习进度
+        <span class="sub">GOAL · 2026.12.20 之前完成</span>
+      </div>
+    </header>
+
+    <div class="info-card">
+      <div class="block">
+        <div class="label">距离截止</div>
+        <div class="value" id="daysLeft">-- 天</div>
+      </div>
+      <div class="block" style="text-align:right;">
+        <div class="label">时间已过</div>
+        <div class="value" id="totalProgress">--%</div>
+      </div>
+    </div>
+
+    <div class="cup-grid" id="cupGrid"></div>
+
+    <div class="course-actions" id="courseActions"></div>
+
+    <div class="footer-note">每完成一点，就把奶茶加满一点 🧋</div>
+  </div>
+
+  <script>
+    const END_DATE = "2026-12-20";
+    const STEP = 5;
+    const STORAGE_KEY = "milkTeaStudyProgress_20261220";
+
+    const courses = [
+      { name: "数学物理方程", color: "#c96a4a" },
+      { name: "数字信号处理", color: "#e0c38a" },
+      { name: "半导体物理", color: "#9cbf65" }
+    ];
+
+    let progress = loadProgress();
+
+    function loadProgress() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+        console.error("读取进度失败", e);
+      }
+      return courses.map(() => 0);
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    }
+
+    function getDateInfo() {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const end = new Date(END_DATE);
+      const start = new Date(localStorage.getItem("startDate") || today);
+
+      if (!localStorage.getItem("startDate")) {
+        localStorage.setItem("startDate", start.toISOString());
+      }
+
+      const totalMs = end - start;
+      const remainMs = end - today;
+      const elapsedMs = today - start;
+
+      const totalDays = Math.max(1, Math.ceil(totalMs / 86400000));
+      const remainDays = Math.ceil(remainMs / 86400000);
+      const elapsedDays = Math.max(0, Math.floor(elapsedMs / 86400000));
+
+      const planPercent = Math.min(100, (elapsedDays / totalDays) * 100);
+      const totalPercent = Math.min(100, (elapsedDays / totalDays) * 100);
+
+      return { remainDays, planPercent, totalPercent };
+    }
+
+    function updateInfoCard() {
+      const { remainDays, totalPercent } = getDateInfo();
+      document.getElementById("daysLeft").textContent = `${remainDays} 天`;
+      document.getElementById("totalProgress").textContent = `${totalPercent.toFixed(1)}%`;
+    }
+
+    function renderCups() {
+      const grid = document.getElementById("cupGrid");
+      grid.innerHTML = "";
+
+      courses.forEach((course, index) => {
+        const cup = document.createElement("div");
+        cup.className = "cup-card";
+        cup.innerHTML = `
+          <div class="cup-straw"></div>
+          <div class="cup-lid"></div>
+          <div class="cup-name">${course.name}</div>
+          <div class="cup-wrap">
+            <div class="cup-outline">
+              <div class="liquid" style="background: ${course.color};"></div>
+              <div class="pearls"></div>
+            </div>
+          </div>
+          <div class="progress-text" id="progressText${index}">0%</div>
+          <div class="status-tag" id="statusTag${index}">计算中...</div>
+        `;
+        grid.appendChild(cup);
+      });
+    }
+
+    function renderActions() {
+      const actions = document.getElementById("courseActions");
+      actions.innerHTML = "";
+
+      courses.forEach((course, index) => {
+        const block = document.createElement("div");
+        block.className = "action-buttons";
+        block.innerHTML = `
+          <button data-action="minus" data-index="${index}">−5%</button>
+          <button data-action="plus" data-index="${index}">+5%</button>
+          <button class="btn-reset" data-action="reset" data-index="${index}">重置</button>
+        `;
+        actions.appendChild(block);
+      });
+
+      bindEvents();
+    }
+
+    function updateCupData() {
+      const { planPercent } = getDateInfo();
+
+      courses.forEach((_, index) => {
+        const actual = progress[index];
+        const liquid = document.querySelectorAll(".liquid")[index];
+        const text = document.getElementById(`progressText${index}`);
+        const tag = document.getElementById(`statusTag${index}`);
+
+        liquid.style.height = `${actual}%`;
+        text.textContent = `${actual}%`;
+
+        const diff = actual - planPercent;
+        if (diff >= 1) {
+          tag.textContent = `超前 ${diff.toFixed(1)}%`;
+          tag.className = "status-tag status-ahead";
+        } else if (diff <= -1) {
+          tag.textContent = `落后 ${Math.abs(diff).toFixed(1)}%`;
+          tag.className = "status-tag status-behind";
+        } else {
+          tag.textContent = "进度刚好";
+          tag.className = "status-tag status-on-track";
+        }
+      });
+    }
+
+    function bindEvents() {
+      document.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const action = e.target.dataset.action;
+          const index = Number(e.target.dataset.index);
+
+          if (action === "plus") {
+            progress[index] = Math.min(100, progress[index] + STEP);
+          } else if (action === "minus") {
+            progress[index] = Math.max(0, progress[index] - STEP);
+          } else if (action === "reset") {
+            if (confirm(`确定要把「${courses[index].name}」重置为 0% 吗？`)) {
+              progress[index] = 0;
+            }
+          }
+
+          saveProgress();
+          updateCupData();
+        });
+      });
+    }
+
+    function render() {
+      updateInfoCard();
+      renderCups();
+      renderActions();
+      updateCupData();
+    }
+
+    render();
+  </script>
+</body>
+</html>
